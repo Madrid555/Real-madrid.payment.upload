@@ -100,7 +100,7 @@
         return emailjs.send("service_96jc01n", "template_uikbtgh", templateParams);
       })
       .then(() => {
-        status.textContent = "Thank you {{full_name}}! Your payment receipt has been received and is currently under review. Please allow some time for processing — a confirmation email will be sent to you shortly.";
+        status.textContent = `Thank you, ${fullName}! Your payment receipt has been received and is currently under review....`;
         status.style.color = "green";
         document.getElementById("receiptForm").reset();
       })
