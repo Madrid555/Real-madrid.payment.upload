@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Payment Receipt</title>
+  <title>Upload PayPal Receipt</title>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f4f4f4;
-      padding: 0;
       margin: 0;
+      padding: 0;
     }
     .container {
       max-width: 600px;
-      background: white;
+      background: #fff;
       padding: 30px;
       margin: 50px auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h2 {
       text-align: center;
@@ -29,11 +29,11 @@
       padding: 12px;
       margin: 10px 0;
       border-radius: 5px;
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
     }
     button {
       background-color: #011a44;
-      color: white;
+      color: #fff;
       font-weight: bold;
       cursor: pointer;
     }
@@ -56,9 +56,9 @@
   </div>
 
   <script>
-    emailjs.init("Safu5CtjKcuBhp2hh");
+    emailjs.init("JWcOE8k4MMUEFNPy-");
 
-    // Autofill name and email from URL params
+    // Autofill name and email from URL
     const urlParams = new URLSearchParams(window.location.search);
     const fullName = urlParams.get('name') || '';
     const userEmail = urlParams.get('email') || '';
@@ -69,8 +69,6 @@
       e.preventDefault();
       const status = document.getElementById("status");
       const file = document.getElementById("receipt").files[0];
-      const fullName = document.getElementById("full_name").value;
-      const email = document.getElementById("email").value;
 
       if (!file) {
         status.textContent = "Please upload your receipt.";
@@ -79,7 +77,7 @@
       }
 
       status.textContent = "Uploading receipt...";
-      status.style.color = "#444";
+      status.style.color = "#555";
 
       const formData = new FormData();
       formData.append("file", file);
@@ -92,15 +90,14 @@
       .then(response => response.json())
       .then(data => {
         const receiptUrl = data.secure_url;
-
         const templateParams = {
           full_name: fullName,
-          email: email,
+          email: userEmail,
           payment_method: "PayPal",
           receipt_url: receiptUrl
         };
 
-        return emailjs.send("service_8fcs4jh", "template_lesqw76", templateParams);
+        return emailjs.send("service_96jc01n", "template_uikbtgh", templateParams);
       })
       .then(() => {
         status.textContent = "Receipt submitted successfully!";
@@ -109,7 +106,7 @@
       })
       .catch(err => {
         console.error("Upload or email failed:", err);
-        status.textContent = "There was an error. Please try again.";
+        status.textContent = "Something went wrong. Please try again.";
         status.style.color = "red";
       });
     });
