@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Payment Receipt</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      padding: 0;
+      margin: 0;
+    }
+    .container {
+      max-width: 600px;
+      background: white;
+      padding: 30px;
+      margin: 50px auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h2 {
+      text-align: center;
+      color: #011a44;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    button {
+      background-color: #011a44;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #status {
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Upload Your PayPal Receipt</h2>
+    <form id="receiptForm">
+      <input type="hidden" id="full_name" />
+      <input type="hidden" id="email" />
+      <input type="file" id="receipt" accept="image/*,.pdf" required />
+      <button type="submit">Submit Receipt</button>
+      <p id="status"></p>
+    </form>
+  </div>
+
+  <script>
+    emailjs.init("Safu5CtjKcuBhp2hh");
+
+    // Autofill name and email from URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const fullName = urlParams.get('name') || '';
+    const userEmail = urlParams.get('email') || '';
+    document.getElementById('full_name').value = fullName;
+    document.getElementById('email').value = userEmail;
+
+    document.getElementById("receiptForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const status = document.getElementById("status");
+      const file = document.getElementById("receipt").files[0];
+      const fullName = document.getElementById("full_name").value;
+      const email = document.getElementById("email").value;
+
+      if (!file) {
+        status.textContent = "Please upload your receipt.";
+        status.style.color = "red";
+        return;
+      }
+
+      status.textContent = "Uploading receipt...";
+      status.style.color = "#444";
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "unsigned_preset");
+
+      fetch("https://api.cloudinary.com/v1_1/dx0oqhyqg/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        const receiptUrl = data.secure_url;
+
+        const templateParams = {
+          full_name: fullName,
+          email: email,
+          payment_method: "PayPal",
+          receipt_url: receiptUrl
+        };
+
+        return emailjs.send("service_8fcs4jh", "template_lesqw76", templateParams);
+      })
+      .then(() => {
+        status.textContent = "Receipt submitted successfully!";
+        status.style.color = "green";
+        document.getElementById("receiptForm").reset();
+      })
+      .catch(err => {
+        console.error("Upload or email failed:", err);
+        status.textContent = "There was an error. Please try again.";
+        status.style.color = "red";
+      });
+    });
+  </script>
+</body>
+</html>
