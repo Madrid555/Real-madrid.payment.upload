@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload PayPal Receipt</title>
+  <title>Upload Receipt</title>
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <style>
     body {
@@ -45,7 +45,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>Upload Your PayPal Receipt</h2>
+    <h2>Upload Your Receipt</h2>
     <form id="receiptForm">
       <input type="hidden" id="full_name" />
       <input type="hidden" id="email" />
@@ -83,7 +83,7 @@
       formData.append("file", file);
       formData.append("upload_preset", "unsigned_preset");
 
-      fetch("https://api.cloudinary.com/v1_1/dx0oqhyqg/upload", {
+      fetch("https://api.cloudinary.com/v1_1/do9yjpizs/upload", {
         method: "POST",
         body: formData
       })
